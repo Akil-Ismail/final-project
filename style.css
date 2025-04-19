@@ -52,28 +52,27 @@ a {
   text-align: center;
   margin-top: 15px;
 }
-.choose-quiz {
+.quizes {
   display: flex;
-  flex-direction: column; /* stack buttons vertically */
-  gap: 15px;
+  flex-direction: column;
   align-items: center;
 }
 
-.choose-quiz button {
+.choose-quiz {
   background-color: #0056b3;
   color: white;
-  border: none;
   padding: 10px 25px;
   font-size: 18px;
   border-radius: 8px;
-  width: 100%;
+  width: 400px;
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
 
-.choose-quiz button:hover {
+.choose-quiz:hover {
   background-color: rgb(88, 0, 88);
 }
+
 .home-header {
   position: fixed;
   top: 0;

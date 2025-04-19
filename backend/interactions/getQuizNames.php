@@ -10,7 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
     die(json_encode($result));
 }
 try {
-    $sql = "SELECT quiz_name,quiz_id  FROM quizez";
+    $sql = "SELECT name,id  FROM quizez";
     $statement = $pdo->prepare($sql);
     $statement->execute();
     $quizes = $statement->fetchAll(PDO::FETCH_ASSOC);
