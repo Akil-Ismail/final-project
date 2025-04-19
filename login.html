@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
+    <title>Welcome!</title>
+  </head>
+  <body>
+    <div class="container">
+      <h1 class="header">Login</h1>
+      <input
+        class="input-field"
+        type="text"
+        id="username"
+        name="username"
+        placeholder=" enter username"
+        required
+      />
+
+      <input
+        class="input-field"
+        type="password"
+        id="password"
+        name="password"
+        placeholder="enter password"
+        required
+      />
+
+      <button class="submit-btn" onclick="handleSubmit()">SUBMIT</button>
+
+      <label id="dont"
+        >Don't have an account?<a href="signup.html" id="link">signup</a></label
+      >
+    </div>
+    <script>
+      function handleSubmit(event) {
+        const formData = new FormData();
+        const username = document.querySelector("#username").value;
+        const password = document.querySelector("#password").value;
+
+        formData.append("username", username);
+        formData.append("password", password);
+
+        fetch("./backend/interactions/login.php", {
+          method: "POST",
+          body: formData,
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.success) {
+              window.location.href = "home.html";
+            } else {
+              alert(data.error || "Login failed.");
+            }
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+            alert("An error occurred during login.");
+          });
+      }
+    </script>
+  </body>
+</html>

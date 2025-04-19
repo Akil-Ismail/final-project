@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+
+  <body>
+    <form
+      action="./backend/interactions/signup.php"
+      method="POST"
+      id="signupForm"
+    >
+      <h1 class="header">Signup</h1>
+      <input
+        class="input-field"
+        type="text"
+        id="username"
+        name="username"
+        placeholder="choose a username"
+        required
+      />
+      <br />
+      <input
+        class="input-field"
+        type="email"
+        name="email"
+        id="email"
+        placeholder="enter your email"
+        required
+      />
+      <br />
+      <input
+        class="input-field"
+        type="password"
+        id="password"
+        name="password"
+        placeholder="choose password"
+        required
+      />
+      <br />
+      <button type="submit">SUBMIT</button>
+      <br />
+      <label id="dont"
+        >Already have an account?<a href="login.html" id="link">login</a></label
+      >
+    </form>
+    <script>
+      document
+        .getElementById("signupForm")
+        .addEventListener("submit", (event) => {
+          event.preventDefault(); // Prevent default form submission
+
+          const formData = new FormData(event.target);
+
+          fetch("http://localhost/backend/interactions/signup.php", {
+            method: "POST",
+            body: formData,
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              if (data.success) {
+                window.location.href = "login.html";
+              } else {
+                alert(data.error || "Signup failed.");
+              }
+            })
+            .catch((error) => {
+              console.error("Error:", error);
+              alert("An error occurred during signup.");
+            });
+        });
+    </script>
+  </body>
+</html>
