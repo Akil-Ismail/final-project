@@ -12,14 +12,31 @@ if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
 $get = $_GET;
 isset($get['quiz_id']) && $quiz_id = $get['quiz_id'];
 try {
-    $sql = "SELECT question,answer FROM questions inner join answers where quiz_id=? and answers.question_id=questions.id";
+    $sql = "SELECT questions.id AS question_id, questions.content, answers.id AS answer_id, answers.answer FROM questions INNER JOIN answers ON answers.question_id = questions.id WHERE quiz_id=?";
     $statement = $pdo->prepare($sql);
     $statement->execute([$quiz_id]);
-    $questions = $statement->fetchAll(PDO::FETCH_ASSOC);
+    $rows = $statement->fetchAll(PDO::FETCH_ASSOC);
+    $structured = [];
+
+    foreach ($rows as $row) {
+        $q_id = $row['question_id'];
+        if (!isset($structured[$q_id])) {
+            $structured[$q_id] = [
+                'question_id' => $q_id,
+                'content' => $row['content'],
+                'answers' => []
+            ];
+        }
+
+        $structured[$q_id]['answers'][] = [
+            'answer_id' => $row['answer_id'],
+            'answer' => $row['answer']
+        ];
+    }
 
     http_response_code(200);
     $result["success"] = true;
-    $result["data"] = $questions;
+    $result["data"] = array_values($structured);
     echo json_encode($result);
     die();
 } catch (PDOException) {
