@@ -14,9 +14,14 @@ async function getQuizNames() {
   }
 }
 async function renderQuizNames() {
+  const container = document.getElementById("quizes");
+  var loader = document.createElement("div");
+  loader.innerHTML = `
+        <div class="loader"></div>
+     `;
+  container.appendChild(loader);
   var quizes = await getQuizNames();
   if (Array.isArray(quizes)) {
-    const container = document.getElementById("quizes");
     container.innerHTML = null;
     quizes.forEach((item) => {
       const itemDiv = document.createElement("div");
@@ -33,9 +38,16 @@ async function renderQuizNames() {
   }
 }
 
+async function renderQuiz() {
+  const params = new URLSearchParams(window.location.search);
+  var quiz_id = params.get("id");
+}
+
 window.onload = function () {
   var path = window.location.pathname;
   if (path === "/web%20practice/home.html") {
     renderQuizNames();
+  } else if (path === "/web%20practice/quiz.html") {
+    renderQuiz();
   }
 };
