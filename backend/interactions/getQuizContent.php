@@ -12,7 +12,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
 $get = $_GET;
 isset($get['quiz_id']) && $quiz_id = $get['quiz_id'];
 try {
-    $sql = "SELECT question FROM quesstions where quiz_id=?";
+    $sql = "SELECT question,answer FROM questions inner join answers where quiz_id=? and answers.question_id=questions.id";
     $statement = $pdo->prepare($sql);
     $statement->execute([$quiz_id]);
     $questions = $statement->fetchAll(PDO::FETCH_ASSOC);
