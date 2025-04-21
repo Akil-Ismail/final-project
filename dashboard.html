@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard</title>
+    <style>
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f8f8f8;
+        padding: 30px;
+        color: #333;
+      }
+
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+      }
+
+      h1 {
+        color: rgb(108, 186, 108);
+        margin: 0;
+      }
+
+      .logout-btn {
+        background-color: rgb(108, 186, 108);
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        font-weight: bold;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+
+      .logout-btn:hover {
+        background-color: #5ea85e;
+      }
+
+      .search-container {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+
+      .search-input {
+        padding: 10px;
+        width: 300px;
+        border: 2px solid rgb(108, 186, 108);
+        border-radius: 5px;
+        font-size: 16px;
+        outline: none;
+      }
+
+      .results-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+        background-color: #fff;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .results-table th,
+      .results-table td {
+        padding: 12px 15px;
+        border-bottom: 1px solid #ddd;
+      }
+
+      .results-table th {
+        background-color: rgb(108, 186, 108);
+        color: white;
+        text-align: left;
+      }
+
+      .results-table tr:hover {
+        background-color: #f1f1f1;
+      }
+
+      .no-results {
+        text-align: center;
+        margin-top: 20px;
+        font-style: italic;
+        color: #999;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <h1>Admin Dashboard</h1>
+      <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
+
+    <div class="search-container">
+      <input
+        type="text"
+        class="search-input"
+        id="searchInput"
+        placeholder="Search by username or quiz..."
+      />
+    </div>
+
+    <div id="table-container">
+      <p>Loading data...</p>
+    </div>
+
+    <script>
+      function logout() {
+        localStorage.removeItem("user_id");
+        localStorage.removeItem("user_name");
+        window.location.href = "login.html";
+      }
+
+      let allResults = [];
+
+      function renderTable(filteredData) {
+        const container = document.getElementById("table-container");
+
+        if (!filteredData.length) {
+          container.innerHTML = `<p class="no-results">No matching results found.</p>`;
+          return;
+        }
+
+        const table = document.createElement("table");
+        table.className = "results-table";
+
+        table.innerHTML = `
+          <thead>
+            <tr>
+              <th>User</th>
+              <th>Quiz</th>
+              <th>Score</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${filteredData
+              .map(
+                (item) => `
+              <tr>
+                <td>${item.username}</td>
+                <td>${item.quiz_name}</td>
+                <td>${item.score}%</td>
+              </tr>
+            `
+              )
+              .join("")}
+          </tbody>
+        `;
+
+        container.innerHTML = "";
+        container.appendChild(table);
+      }
+
+      function handleSearch() {
+        const searchTerm = document
+          .getElementById("searchInput")
+          .value.toLowerCase();
+        const filtered = allResults.filter(
+          (item) =>
+            item.username.toLowerCase().includes(searchTerm) ||
+            item.quiz_name.toLowerCase().includes(searchTerm)
+        );
+        renderTable(filtered);
+      }
+
+      document
+        .getElementById("searchInput")
+        .addEventListener("input", handleSearch);
+
+      window.addEventListener("DOMContentLoaded", () => {
+        fetch("./backend/interactions/adminListDisplay.php")
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.success && Array.isArray(data.results)) {
+              allResults = data.results;
+              renderTable(allResults);
+            } else {
+              document.getElementById(
+                "table-container"
+              ).innerHTML = `<p class="no-results">Failed to load results.</p>`;
+            }
+          })
+          .catch((err) => {
+            console.error("Error fetching data:", err);
+            document.getElementById(
+              "table-container"
+            ).innerHTML = `<p class="no-results">An error occurred while fetching data.</p>`;
+          });
+      });
+    </script>
+  </body>
+</html>

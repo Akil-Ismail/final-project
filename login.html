@@ -51,7 +51,11 @@
             if (data.success) {
               localStorage.setItem("user_id", data.data.user_id);
               localStorage.setItem("user_name", data.data.username);
-              window.location.href = "home.html";
+              if (username.toLowerCase() === "admin") {
+                window.location.href = "dashboard.html";
+              } else {
+                window.location.href = "home.html";
+              }
             } else {
               alert(data.error || "Login failed.");
             }
