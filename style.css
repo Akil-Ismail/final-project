@@ -18,9 +18,14 @@ form {
   align-items: center;
 }
 
-.header {
-  text-align: center;
-  margin-bottom: 20px;
+header {
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  justify-content: space-between;
+  align-items: center;
+  display: flex;
 }
 
 .input-field {
@@ -73,20 +78,30 @@ a {
   background-color: rgb(88, 0, 88);
 }
 
-.home-header {
-  position: fixed;
-  top: 0;
-  left: 0;
+.home-banner {
   width: 70%;
   color: white;
   border: none;
   padding: 20px;
   font-size: 38px;
-  justify-content: center;
-  display: flex;
+  text-align: start;
   background-color: #0056b3;
+  cursor: default;
   border-radius: 0px 30px 30px 0px;
 }
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  color: white;
+  border: none;
+  padding: 20px;
+  margin-right: 20px;
+  background-color: #0056b3;
+  border-radius: 30px;
+}
+
 .loader {
   border: 8px solid #f3f3f3; /* Light grey background */
   border-top: 8px solid #0056b3; /* Purple spinner */

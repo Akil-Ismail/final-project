@@ -55,7 +55,7 @@
 
           const formData = new FormData(event.target);
 
-          fetch("http://localhost/backend/interactions/signup.php", {
+          fetch("./backend/interactions/signup.php", {
             method: "POST",
             body: formData,
           })
