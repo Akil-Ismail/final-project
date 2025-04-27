@@ -3,87 +3,9 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="dashboard.css" />
+    <script src="main.js" defer></script>
     <title>Admin Dashboard</title>
-    <style>
-      body {
-        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-        background-color: #f8f8f8;
-        padding: 30px;
-        color: #333;
-      }
-
-      .header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 30px;
-      }
-
-      h1 {
-        color: rgb(108, 186, 108);
-        margin: 0;
-      }
-
-      .logout-btn {
-        background-color: rgb(108, 186, 108);
-        color: white;
-        border: none;
-        padding: 10px 20px;
-        font-weight: bold;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-      }
-
-      .logout-btn:hover {
-        background-color: #5ea85e;
-      }
-
-      .search-container {
-        text-align: center;
-        margin-bottom: 20px;
-      }
-
-      .search-input {
-        padding: 10px;
-        width: 300px;
-        border: 2px solid rgb(108, 186, 108);
-        border-radius: 5px;
-        font-size: 16px;
-        outline: none;
-      }
-
-      .results-table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 20px;
-        background-color: #fff;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-      }
-
-      .results-table th,
-      .results-table td {
-        padding: 12px 15px;
-        border-bottom: 1px solid #ddd;
-      }
-
-      .results-table th {
-        background-color: rgb(108, 186, 108);
-        color: white;
-        text-align: left;
-      }
-
-      .results-table tr:hover {
-        background-color: #f1f1f1;
-      }
-
-      .no-results {
-        text-align: center;
-        margin-top: 20px;
-        font-style: italic;
-        color: #999;
-      }
-    </style>
   </head>
   <body>
     <div class="header">
@@ -104,89 +26,67 @@
       <p>Loading data...</p>
     </div>
 
-    <script>
-      function logout() {
-        localStorage.removeItem("user_id");
-        localStorage.removeItem("user_name");
-        window.location.href = "login.html";
-      }
+    <button class="manage-button" onclick="openQuizes()">Manage Quizes</button>
 
-      let allResults = [];
+    <div class="add" id="add">
+      <div id="add-content" class="add-content">
+        <span class="close" onclick="closeQuizes()">&times;</span>
+        <div class="quizes" id="quizes"></div>
+        <br />
+        <button class="plus-button" onclick="openAddNewQuiz()">+</button>
+      </div>
 
-      function renderTable(filteredData) {
-        const container = document.getElementById("table-container");
+      <div id="dash-quiz" hidden class="quiz"></div>
 
-        if (!filteredData.length) {
-          container.innerHTML = `<p class="no-results">No matching results found.</p>`;
-          return;
-        }
+      <div id="new-quiz" hidden class="quiz">
+        <span class="close" onclick="closeAddNewQuiz()">&times;</span>
+        <h3>
+          <label class="question-input">
+            Quiz name: <input id="quiz-name" />
+          </label>
+        </h3>
 
-        const table = document.createElement("table");
-        table.className = "results-table";
+        <div class="separator"></div>
 
-        table.innerHTML = `
-          <thead>
-            <tr>
-              <th>User</th>
-              <th>Quiz</th>
-              <th>Score</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${filteredData
-              .map(
-                (item) => `
-              <tr>
-                <td>${item.username}</td>
-                <td>${item.quiz_name}</td>
-                <td>${item.score}%</td>
-              </tr>
-            `
-              )
-              .join("")}
-          </tbody>
-        `;
+        <div id="admin-questions" class="questions">
+          <form id="admin-new-question-new" hidden class="question">
+            <h3>New Question</h3>
+            <div class="separator"></div>
 
-        container.innerHTML = "";
-        container.appendChild(table);
-      }
+            <label class="question-input">
+              Question:
+              <input
+                id="admin-new-question-input"
+                placeholder="Don't forget the '?'"
+              />
+            </label>
 
-      function handleSearch() {
-        const searchTerm = document
-          .getElementById("searchInput")
-          .value.toLowerCase();
-        const filtered = allResults.filter(
-          (item) =>
-            item.username.toLowerCase().includes(searchTerm) ||
-            item.quiz_name.toLowerCase().includes(searchTerm)
-        );
-        renderTable(filtered);
-      }
+            <div id="admin-new-answers" class="answers">
+              <div class="answer-option">
+                <input class="answer-input" placeholder="Answer text" />
+                <input
+                  type="radio"
+                  name="admin-correct-answer"
+                  class="correct-radio"
+                />
+                Correct
+              </div>
+              <button onclick="adminAddAnswerInput(event)">+</button>
+            </div>
 
-      document
-        .getElementById("searchInput")
-        .addEventListener("input", handleSearch);
+            <button onclick="adminSubmitNewQuestion(event)">
+              Submit New Question
+            </button>
+          </form>
+        </div>
 
-      window.addEventListener("DOMContentLoaded", () => {
-        fetch("./backend/interactions/adminListDisplay.php")
-          .then((res) => res.json())
-          .then((data) => {
-            if (data.success && Array.isArray(data.results)) {
-              allResults = data.results;
-              renderTable(allResults);
-            } else {
-              document.getElementById(
-                "table-container"
-              ).innerHTML = `<p class="no-results">Failed to load results.</p>`;
-            }
-          })
-          .catch((err) => {
-            console.error("Error fetching data:", err);
-            document.getElementById(
-              "table-container"
-            ).innerHTML = `<p class="no-results">An error occurred while fetching data.</p>`;
-          });
-      });
-    </script>
+        <button
+          id="admin-open-add-new-question"
+          onclick="adminOpenAddNewQuestion(event)"
+        >
+          Add New Question
+        </button>
+      </div>
+    </div>
   </body>
 </html>
